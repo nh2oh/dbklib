@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <string>
 
+namespace dbk {
+
 //
 // contigmap<T_key,T_val>
 // A map between a set of unique elements of type T_key and elements of type 
@@ -94,5 +96,10 @@ private:
 
 	std::vector<kvpair_t> m_kv {};
 };
+
+
+contigmap<int,double> make_example_contigmap(int);
+
+}; // namespace dbk
 
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 
-
+namespace dbk {
 //
 // chunkyseq<T>
 // Kind of like a std::vector<std::vector<T>> except that the elements are 
@@ -161,4 +161,10 @@ private:
 template<typename T>
 bool operator!=(const chunkyseq<T>& lhs, const chunkyseq<T>& rhs) {
 	return !(lhs==rhs);
-}
+};
+
+
+};  // namespace dbk
+
+
+

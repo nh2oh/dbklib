@@ -21,9 +21,15 @@
     <ClInclude Include="contigmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dbklib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbklib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="contigmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
