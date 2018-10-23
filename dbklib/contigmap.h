@@ -11,10 +11,11 @@ namespace dbk {
 // T_val implemented in such a way that the {key,value} elements are stored 
 // contiguously in memory.  
 //
-// contigmap[T_key k] returns a ref to the value associated w/ key k.  
+// contigmap[T_key k] returns a ref to the _value_ associated w/ key k.  
 //   If k is not a member of the set, it is added w/ a corresponding 
 //   value of T_val {}.  
-//
+// insert({T_key,T_val}) returns a ref to the kvpair_t struct (not just the
+//   T_val _value_, as operator[]) associated w/ key k.  
 //
 //
 
@@ -36,10 +37,10 @@ public:
 	};
 	iterator_t insert(const kvpair_t& kv) {
 		auto i = findkey(kv.k);
-		if (i==m_kv.end()) {
-			m_kv.push_back(kv);
+		if (i!=m_kv.end() && (*i).v==kv.v) {
+			return i; // Key is present & value is unchanged
 		}
-		return i;
+		return m_kv.insert(i,1,kv);
 	};
 	bool erase(const T_key& k) {
 		auto i = findkey(k);
@@ -49,8 +50,9 @@ public:
 	};
 	T_val& operator[](const T_key& k) {
 		auto i = findkey(k);
-		if (i==m_kv.end()) {
+		if (i==m_kv.end()) {  // Key is absent
 			m_kv.push_back(kvpair_t{k, T_val{}});
+			i = --m_kv.end();  // push_back() may invalidate i
 		}
 		return (*i).v;
 	};
@@ -62,8 +64,9 @@ public:
 		return m_kv.end();
 	};
 
-	bool ismember(const T_key& k) const {
-		return (findkey(k)!=m_kv.end());
+	bool ismember(const T_key& k) {
+		auto i = findkey(k);
+		return (i!=m_kv.end());
 	};
 	size_t size() const {
 		return m_kv.size();
@@ -99,6 +102,7 @@ private:
 
 
 contigmap<int,double> make_example_contigmap(int);
+std::string demo_contigmap(int);
 
 }; // namespace dbk
 
