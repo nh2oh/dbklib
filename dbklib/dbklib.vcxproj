@@ -157,6 +157,7 @@
     <ClInclude Include="contigmap.h" />
     <ClInclude Include="dbklib.h" />
     <ClInclude Include="tinyformat_dbk.h" />
+    <ClInclude Include="type_inspect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="contigmap.cpp" />

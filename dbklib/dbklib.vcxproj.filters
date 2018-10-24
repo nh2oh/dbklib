@@ -27,6 +27,9 @@
     <ClInclude Include="tinyformat_dbk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="type_inspect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbklib.cpp">

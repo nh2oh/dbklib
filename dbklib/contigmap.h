@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <exception>  // std::terminate()
 
 namespace dbk {
 
@@ -16,7 +17,8 @@ namespace dbk {
 //   value of T_val {}.  
 // insert({T_key,T_val}) returns a ref to the kvpair_t struct (not just the
 //   T_val _value_, as operator[]) associated w/ key k.  
-//
+// at(T_key k) returns the corresponding val if k is a member.  If k is not
+//   a member, std::terminate() is called.  
 //
 
 // Used as the return value of operator[] and as an argument to insert
@@ -56,6 +58,13 @@ public:
 		}
 		return (*i).v;
 	};
+	T_val& at(const T_key& k) {
+		auto i = findkey(k);
+		if (i==m_kv.end()) {  // Key is absent
+			std::terminate();
+		}
+		return (*i).v;
+	};
 
 	iterator_t begin() {
 		return m_kv.begin();
@@ -70,7 +79,7 @@ public:
 	};
 	size_t size() const {
 		return m_kv.size();
-	}
+	};
 	std::string print() {
 		std::string s {};
 		for (size_t i=0; i<m_kv.size(); ++i) {
@@ -83,10 +92,10 @@ public:
 
 	bool operator==(const contigmap& rhs) const {
 		return m_kv==rhs.m_kv;
-	}
+	};
 	bool operator!=(const contigmap& rhs) const {
 		return !(m_kv==rhs.m_kv);
-	}
+	};
 
 private:
 	// Not const b/c need to return a non-const iterator to m_kv;
@@ -103,6 +112,7 @@ private:
 
 contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
+bool contigmap_test_set_a();
 
 }; // namespace dbk
 
