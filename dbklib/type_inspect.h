@@ -1,14 +1,35 @@
 #pragma once
 #include <type_traits>
 #include <string>
+#include <typeinfo>
 #include "contigmap.h"
 #include "tinyformat_dbk.h"
 
 namespace dbk{
 
+struct inspect_type_result {
+	dbk::contigmap<std::string,bool> static_tt {};
+	std::string typeinfoname {};
+};
+
 template<typename T>
-dbk::contigmap<std::string,bool> inspect_type(T) {
+inspect_type_result inspect_type(T v) {
 	dbk::contigmap<std::string,bool> m {};
+
+	m["is_void"] = std::is_void<T>::value;
+	m["is_null_pointer"] = std::is_null_pointer<T>::value;
+	m["is_integral"] = std::is_integral<T>::value;
+	m["is_floating_point"] = std::is_floating_point<T>::value;
+	m["is_array"] = std::is_array<T>::value;
+	m["is_pointer"] = std::is_pointer<T>::value;
+	m["is_lvalue_reference"] = std::is_lvalue_reference<T>::value;
+	m["is_rvalue_reference"] = std::is_rvalue_reference<T>::value;
+	m["is_member_object_pointer"] = std::is_member_object_pointer<T>::value;
+	m["is_member_function_pointer"] = std::is_member_function_pointer<T>::value;
+	m["is_enum"] = std::is_enum<T>::value;
+	m["is_union"] = std::is_union<T>::value;
+	m["is_class"] = std::is_class<T>::value;
+	m["is_function"] = std::is_function<T>::value;
 
 	m["is_reference"] = std::is_reference<T>::value;
 	m["is_arithmetic"] = std::is_arithmetic<T>::value;
@@ -62,24 +83,27 @@ dbk::contigmap<std::string,bool> inspect_type(T) {
 	m["hasirtual_destructor"] = std::has_virtual_destructor<T>::value;
 	m["has_unique_object_representations"] = std::has_unique_object_representations<T>::value;
 
-	return m;
+	return dbk::inspect_type_result {m, typeid(v).name()};
 };
 
 template<typename T>
 std::string print_inspect_type(T v, const std::string& tn) {
 	std::string s {};
 	std::string cat_s {};  // "category str"
-	auto m = inspect_type<T>(v);
-	s += bsprintf("For type T = %s:\n",tn);
+	auto itr = inspect_type<T>(v);  // "inspect-type-result"
+	auto m = itr.static_tt;
+	s += bsprintf("For type T = %s:  typeid(T).name=%s\n",tn,itr.typeinfoname);
 
 	for (const auto& e : m) {
 		cat_s = bsprintf("std::%s<%s>::value = ",e.k,tn);
 		s += bsprintf("%-85s%d\n",cat_s,e.v);
-		//s += bsprintf("std::%s<%s>::value = %d\n",e.k,tn,e.v);
 	}
 
 	return s;
 };
+
+std::string compare_types(inspect_type_result, inspect_type_result);
+
 
 };  // namespace dbk
 
