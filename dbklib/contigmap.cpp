@@ -64,6 +64,17 @@ bool dbk::contigmap_test_set_a() {
 	return tf;
 };
 
+bool dbk::contigmap_test_set_b() {
+	const auto m1 = dbk::make_example_contigmap(7);
 
+	std::string s {};
+	for (const auto& e : m1) {
+		s += std::to_string(e.k);
+		s += " => ";
+		s += std::to_string(e.v);
+	}
+
+	return true;
+}
 
 

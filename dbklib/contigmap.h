@@ -35,10 +35,94 @@ class contigmap {
 public:
 	using kvpair_t = typename kvpair<T_key,T_val>;
 	using iterator_t = typename std::vector<kvpair_t>::iterator;
+	using citerator_t = typename std::vector<kvpair_t>::const_iterator;
+	//-------------------------------------------------------------------------
+	// ctors
+	explicit contigmap() = default;
+
+	explicit contigmap(const std::vector<T_key>& k, const T_val& v) {
+		for (size_t i=0; i<k.size(); ++i) {
+			insert({k[i],v});
+		}
+	};
+
+	explicit contigmap(const std::vector<T_key>& k, const std::vector<T_val>& v) {
+		if (k.size() != v.size()) {
+			// If i wanted, i could allow k to be larger than v, and just insert default-
+			// constructed v's for those k's w/o corresponding v's, but it's better to
+			// let the user deal with this.  
+			std::terminate();
+		}
+
+		reserve(k.size());
+		for (size_t i=0; i<k.size(); ++i) {
+			insert({k[i],v[i]});
+		}
+	};
 
 	void reserve(size_t s) {
 		m_kv.reserve(s);
 	};
+
+	//-------------------------------------------------------------------------
+	// Pure getters (do not add/insert/update values or key-value pairs)
+	// .at() and (const this*)->operator[] are not the same: operator[]
+	// returns a const T_val&
+	std::vector<T_key> keys() {
+		std::vector<T_key> k {}; k.reserve(m_kv.size);
+		for (auto e : m_kv) {
+			k.push_back(e.k);
+		}
+		return k;
+	}
+	std::vector<T_val> values() {
+		std::vector<T_val> v {}; v.reserve(m_kv.size);
+		for (auto e : m_kv) {
+			v.push_back(e.k);
+		}
+		return v;
+	}
+	// Calls std::terminate() if k is not present
+	T_val& at(const T_key& k) {
+		auto i = findkey(k);
+		if (i==m_kv.end()) {  // Key is absent
+			std::terminate();
+		}
+		return (*i).v;
+	};
+	// Const overload of operator[] calls std::terminate if k is missing
+	const T_val& operator[](const T_key& k) const {
+		auto i = findkey(k);  // const overload => i ~ citerator_t
+		if (i==m_kv.cend()) {  // Key is absent
+			std::terminate();
+		}
+		return (*i).v;
+	};
+	// "at position;" get the element at map.begin()+i
+	T_val& atpos(size_t i) {
+		if (i > m_kv.size()) {
+			std::terminate();
+		}
+		return *(m_kv.begin()+i);
+	};
+
+	//-------------------------------------------------------------------------
+	// Modifying getters (will add/insert a key-value pair if the requested key 
+	// not present).  
+	// Inserts a default-value-constructed T_val if k is not present
+	T_val& operator[](const T_key& k) {
+		auto i = findkey(k);
+		if (i==m_kv.end()) {  // Key is absent
+			m_kv.push_back(kvpair_t{k, T_val{}});
+			i = --m_kv.end();  // push_back() may invalidate i
+		}
+		return (*i).v;
+	};
+
+
+	//-------------------------------------------------------------------------
+	// Setters (modify existing elements or add new elements w/o returning the
+	// value).
 	iterator_t insert(const kvpair_t& kv) {
 		auto i = findkey(kv.k);
 		if (i!=m_kv.end() && (*i).v==kv.v) {
@@ -52,39 +136,19 @@ public:
 		m_kv.erase(i);
 		return true;
 	};
-	
-	// Inserts a default-value-constructed T_val if k is not present
-	T_val& operator[](const T_key& k) {
-		auto i = findkey(k);
-		if (i==m_kv.end()) {  // Key is absent
-			m_kv.push_back(kvpair_t{k, T_val{}});
-			i = --m_kv.end();  // push_back() may invalidate i
-		}
-		return (*i).v;
-	};
-
-	// "at position;" get the element at map.begin()+i
-	T_val& atpos(size_t i) {
-		if (i > m_kv.size()) {
-			std::terminate();
-		}
-		return *(m_kv.begin()+i);
-	}
-
-	// Calls std::terminate() if k is not present
-	T_val& at(const T_key& k) {
-		auto i = findkey(k);
-		if (i==m_kv.end()) {  // Key is absent
-			std::terminate();
-		}
-		return (*i).v;
-	};
 
 	iterator_t begin() {
 		return m_kv.begin();
 	};
 	iterator_t end() {
 		return m_kv.end();
+	};
+
+	citerator_t begin() const {
+		return m_kv.cbegin();
+	};
+	citerator_t end() const {
+		return m_kv.cend();
 	};
 
 	bool ismember(const T_key& k) {
@@ -120,6 +184,11 @@ private:
 			[&](const kvpair_t& e){return e.k==k;});
 	};
 
+	citerator_t findkey(const T_key& k) const {
+		return std::find_if(m_kv.cbegin(), m_kv.cend(),
+			[&](const kvpair_t& e){return e.k==k;});
+	};
+
 	std::vector<kvpair_t> m_kv {};
 };
 
@@ -127,7 +196,7 @@ private:
 contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
 bool contigmap_test_set_a();
-
+bool contigmap_test_set_b();
 }; // namespace dbk
 
 
