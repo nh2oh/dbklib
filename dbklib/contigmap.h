@@ -197,6 +197,7 @@ contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
 bool contigmap_test_set_a();
 bool contigmap_test_set_b();
+
 }; // namespace dbk
 
 
