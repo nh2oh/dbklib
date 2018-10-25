@@ -36,6 +36,7 @@ public:
 	using kvpair_t = typename kvpair<T_key,T_val>;
 	using iterator_t = typename std::vector<kvpair_t>::iterator;
 	using citerator_t = typename std::vector<kvpair_t>::const_iterator;
+
 	//-------------------------------------------------------------------------
 	// ctors
 	explicit contigmap() = default;
@@ -103,7 +104,7 @@ public:
 		if (i > m_kv.size()) {
 			std::terminate();
 		}
-		return *(m_kv.begin()+i);
+		return (*(m_kv.begin()+i)).v;
 	};
 
 	//-------------------------------------------------------------------------
@@ -125,9 +126,15 @@ public:
 	// value).
 	iterator_t insert(const kvpair_t& kv) {
 		auto i = findkey(kv.k);
-		if (i!=m_kv.end() && (*i).v==kv.v) {
-			return i; // Key is present & value is unchanged
+		if (i!=m_kv.end()) {  // key is present...
+			if ((*i).v==kv.v) {  // ...but the value is unchanged
+				return i; // Key is present & value is unchanged
+			} else {  // ... and the value is different
+				*i=kv;
+			}
+			return i;
 		}
+		// key is absent
 		return m_kv.insert(i,1,kv);
 	};
 	bool erase(const T_key& k) {
@@ -197,6 +204,10 @@ contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
 bool contigmap_test_set_a();
 bool contigmap_test_set_b();
+bool contigmap_test_set_c();
+bool contigmap_test_set_d();
+
+
 
 }; // namespace dbk
 

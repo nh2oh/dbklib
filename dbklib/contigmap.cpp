@@ -1,4 +1,5 @@
 #include "contigmap.h"
+#include <vector>
 #include <string>
 
 using namespace dbk;
@@ -65,16 +66,114 @@ bool dbk::contigmap_test_set_a() {
 };
 
 bool dbk::contigmap_test_set_b() {
-	const auto m1 = dbk::make_example_contigmap(7);
+	bool tf {false};
+	dbk::contigmap<int,double> m {};
 
-	std::string s {};
-	for (const auto& e : m1) {
-		s += std::to_string(e.k);
-		s += " => ";
-		s += std::to_string(e.v);
+	tf = (m.size() == 0);
+	if (!tf) { return tf; };
+
+	m.insert({22, 1.428});
+	tf = (m.size() == 1);
+	if (!tf) { return tf; };
+
+	m.insert({477, -178.3});
+	tf = (m.size() == 2);
+	if (!tf) { return tf; };
+
+	m.insert({3, 0.0});
+	tf = (m.size() == 3);
+	if (!tf) { return tf; };
+
+	m.insert({3, 1});
+	tf = (m.size() == 3);
+	if (!tf) { return tf; };
+
+	m.erase(22);
+	tf = (m.size() == 2);
+	if (!tf) { return tf; };
+
+	m.erase(22);
+	tf = (m.size() == 2);
+	if (!tf) { return tf; };
+
+	m.erase(477);
+	tf = (m.size() == 1);
+	if (!tf) { return tf; };
+
+	return tf;
+}
+
+
+bool dbk::contigmap_test_set_c() {
+	bool tf {false};
+	std::vector<int> vk {7, -17, 4, 3, -16, -2, 222, 10, -14, -19, 2, 25, -7, -106, 22, 5, -27};
+	std::vector<double> vv {0.04, 0.05, 0.0455, 0.1111, -0.125, 0.0556, 0.0625, 0.0435,
+		0.0588, 0.0455, 0.04, 0.0500, 0.0455, 1.0, 2.0, 3.0, 4.0};
+	std::vector<size_t> vi {4, 7, 6, 8, 12, 9, 1, 2, 5, 0, 6, 4, 4, 2, 0, 0, 0};
+	dbk::contigmap<int, double> m(vk,vv);
+
+	tf = (m.size() == 17);
+	if (!tf) { return tf; };
+
+	// Checks the ordering of the elements
+	size_t i {0};
+	for (auto e : m) {
+		tf = (e.v == vv[i]);
+		if (!tf) { return tf; };
+		++i;
+	}
+
+	for (size_t i=0; i<17; ++i) {
+		tf = (m.size()==17-i);
+		if (!tf) { return tf; };
+
+		m.erase(vk[vi[i]]);
+		if (!tf) { return tf; };
+
+		// Erasing does not affect the positioning of the elements: it's the
+		// same as the erase method for std::vector
+		vv.erase(vv.begin()+vi[i]);
+		vk.erase(vk.begin()+vi[i]);
+		for (size_t j=0; j<m.size(); ++j) {
+			tf = (m.atpos(j) == vv[j]);
+			if (!tf) { return tf; };
+		}
 	}
 
 	return true;
 }
+
+
+bool dbk::contigmap_test_set_d() {
+	bool tf {false};
+	std::string s {};
+	s += "contrary to popular belief unit testing does not mean writing twice as much ";
+	s += "code, or coding slower. it's faster and more robust than coding without tests ";
+	s += "once you've got the hang of it. test code itself is usually relatively trivial ";
+	s += "and doesn't add a big overhead to what you're doing. this is one you'll only";
+	s += "believe when you're doing it :)";
+	std::vector<char> L {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 
+		'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+	std::vector<int> N {16, 4, 8, 13, 29, 4, 9, 9, 23, 0, 0, 13, 3, 19, 28, 2, 0, 14, 16, 29,
+		11, 5, 6, 0, 8, 0};
+
+	dbk::contigmap<char,int> m {};
+	for (size_t i=0; i<s.size(); ++i) {
+		// NB:  The value-constructed int field in the map => initialization to 0
+		m[s[i]] += 1;
+	};
+
+	// m contains counts for ':', ',', etc, that are not in L
+	for (size_t i=0; i<L.size(); ++i) {
+		if (!m.ismember(L[i])) {
+			continue;
+			// Otherwise operator[] will insert a 0 for m[L[i]]
+		}
+		tf = (m[L[i]] == N[i]);
+		if (!tf) { return tf; };
+	}
+	return true;
+}
+
 
 
