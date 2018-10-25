@@ -10,7 +10,9 @@ namespace dbk {
 // contigmap<T_key,T_val>
 // A map between a set of unique elements of type T_key and elements of type 
 // T_val implemented in such a way that the {key,value} elements are stored 
-// contiguously in memory.  
+// contiguously in memory.  Members are sorted (reflected in the order in 
+// which elements are returned by map.begin()+0, map.begin()+1, ...) by order 
+// of insertion.  
 //
 // contigmap[T_key k] returns a ref to the _value_ associated w/ key k.  
 //   If k is not a member of the set, it is added w/ a corresponding 
@@ -50,6 +52,8 @@ public:
 		m_kv.erase(i);
 		return true;
 	};
+	
+	// Inserts a default-value-constructed T_val if k is not present
 	T_val& operator[](const T_key& k) {
 		auto i = findkey(k);
 		if (i==m_kv.end()) {  // Key is absent
@@ -58,6 +62,16 @@ public:
 		}
 		return (*i).v;
 	};
+
+	// "at position;" get the element at map.begin()+i
+	T_val& atpos(size_t i) {
+		if (i > m_kv.size()) {
+			std::terminate();
+		}
+		return *(m_kv.begin()+i);
+	}
+
+	// Calls std::terminate() if k is not present
 	T_val& at(const T_key& k) {
 		auto i = findkey(k);
 		if (i==m_kv.end()) {  // Key is absent
