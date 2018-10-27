@@ -93,7 +93,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
-      <AdditionalIncludeDirectories>..\dbklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(dbk_proj_path)\dbklib\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
-      <AdditionalIncludeDirectories>..\dbklib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(dbk_proj_path)\dbklib\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

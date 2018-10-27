@@ -1,17 +1,20 @@
 #include "contigmap.h"
+#include "tinyformat_dbk.h"
 #include <vector>
 #include <string>
+#include <algorithm>  // std::shuffle()
+#include <random>  // Needed for std::shuffle()
 
 using namespace dbk;
 
-
 contigmap<int,double> dbk::make_example_contigmap(int sz) {
-	int max_n_keys {15};
-	double d {17.563};
+	// Just some "random" numbers to make the keys and values more "interesting."
+	int shiftk=sz/2; int maxk=15*sz; double d {17.563};
 	contigmap<int,double> cm {};
 	for (int i=0; i<sz; ++i) {
-		double val {i/(d+i)};
-		cm.insert({i%max_n_keys,val});
+		int k {(i*i-shiftk)%maxk};
+		double v {i/(d+i)};
+		cm.insert({k,v});
 	}
 	return cm;
 }
@@ -20,18 +23,26 @@ std::string dbk::demo_contigmap(int sz) {
 	int max_n_keys {15};
 	double d {17.563};
 	std::string s {};
+	s += "\n\n*** dbk::contigmap<key,val> demo ***\n\n";
 	contigmap<int,double> cm {};
+	s += bsprintf("contigmap<int,double> cm {}; => cm.size()= %d\n",cm.size());
 	for (int i=0; i<sz; ++i) {
-		int k {i%max_n_keys};
-		double val {i/(d+i)};
-		s += "cm.ismember(" + std::to_string(k) + ") = " + 
-			std::to_string(cm.ismember(k)) + ";\t\t";
-		s += "cm.insert({" + std::to_string(k) + 
-			"," + std::to_string(val)+ "});\t\t";
-		cm.insert({k,val});
-		s += "cm[" + std::to_string(k) + "] = " +
-			std::to_string(cm[k]) + ";\n";
+		int k {(i*i)%max_n_keys};
+		double v {i/(d+i)};
+		s += bsprintf("cm.ismember(%d)==%d\tcm.insert({%d,%4.3f});\n",k,cm.ismember(k),k,v);
+		cm.insert({k,v});
+		s += bsprintf("\t => cm.ismember(%d)==%d\tcm[%d]==%4.3f\n",k,cm.ismember(k),k,cm[k]);
 	}
+
+	s += bsprintf("\n");
+	s += "Elements are sorted by key.  Thus in a range-for loop the order ";
+	s += "differs from that of insertion:\n";
+	size_t i {0};
+	for (const auto& e : cm) {
+		s += bsprintf("cm.begin()+%d => cm[%d]==%4.3f\n",i,e.k,e.v);
+		++i;
+	}
+
 	return s;
 }
 
@@ -109,35 +120,32 @@ bool dbk::contigmap_test_set_c() {
 	std::vector<int> vk {7, -17, 4, 3, -16, -2, 222, 10, -14, -19, 2, 25, -7, -106, 22, 5, -27};
 	std::vector<double> vv {0.04, 0.05, 0.0455, 0.1111, -0.125, 0.0556, 0.0625, 0.0435,
 		0.0588, 0.0455, 0.04, 0.0500, 0.0455, 1.0, 2.0, 3.0, 4.0};
-	std::vector<size_t> vi {4, 7, 6, 8, 12, 9, 1, 2, 5, 0, 6, 4, 4, 2, 0, 0, 0};
+	//std::vector<size_t> vi {4, 7, 6, 8, 12, 9, 1, 2, 5, 0, 6, 3, 4, 2, 0, 0, 0};
 	dbk::contigmap<int, double> m(vk,vv);
 
 	tf = (m.size() == 17);
 	if (!tf) { return tf; };
 
 	// Checks the ordering of the elements
+	std::vector<int> sk {};  sk = vk;
+	std::sort(sk.begin(),sk.end());
 	size_t i {0};
 	for (auto e : m) {
-		tf = (e.v == vv[i]);
+		//tf = (e.v == vv[i]);
+		tf = (e.v == m[sk[i]] && e.k == sk[i]);
 		if (!tf) { return tf; };
 		++i;
 	}
 
+	std::random_device rd;
+	std::mt19937 g(rd());
+	std::shuffle(vk.begin(),vk.end(),g);
 	for (size_t i=0; i<17; ++i) {
 		tf = (m.size()==17-i);
 		if (!tf) { return tf; };
 
-		m.erase(vk[vi[i]]);
+		m.erase(vk[i]);
 		if (!tf) { return tf; };
-
-		// Erasing does not affect the positioning of the elements: it's the
-		// same as the erase method for std::vector
-		vv.erase(vv.begin()+vi[i]);
-		vk.erase(vk.begin()+vi[i]);
-		for (size_t j=0; j<m.size(); ++j) {
-			tf = (m.atpos(j) == vv[j]);
-			if (!tf) { return tf; };
-		}
 	}
 
 	return true;
@@ -147,11 +155,11 @@ bool dbk::contigmap_test_set_c() {
 bool dbk::contigmap_test_set_d() {
 	bool tf {false};
 	std::string s {};
-	s += "contrary to popular belief unit testing does not mean writing twice as much ";
-	s += "code, or coding slower. it's faster and more robust than coding without tests ";
-	s += "once you've got the hang of it. test code itself is usually relatively trivial ";
-	s += "and doesn't add a big overhead to what you're doing. this is one you'll only";
-	s += "believe when you're doing it :)";
+	s += ".irtthvaysasyii vefrocoil e l o iaetdetny'utv otetlnsu ealol ec   flgth  guise ";
+	s += "u edicim menngttah w et  prl egysbf itoeitto acrnottupilsoie w asrannncuro ";
+	s += "seo 't  stndodaoer  cto he im snrnstoticedctfh ortnow iolwt iau. ,usrgaesrd gb";
+	s += "'nrlet wadag  yi  h e tgsidsona  looatro  od el.oh thie'vyns na'buedudidnooy";
+	s += "d)eeihyg rni  ou'te:neb ile wvo";
 	std::vector<char> L {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 
 		'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
 	std::vector<int> N {16, 4, 8, 13, 29, 4, 9, 9, 23, 0, 0, 13, 3, 19, 28, 2, 0, 14, 16, 29,
@@ -174,6 +182,36 @@ bool dbk::contigmap_test_set_d() {
 	}
 	return true;
 }
+
+
+bool dbk::contigmap_test_set_e() {
+	bool tf {false};
+
+	// key 0 appears twice:  The first value is 'b', the second is 't'
+	std::vector<int> k {-1,0,1,2,3,41,15,0};
+	std::vector<char> v {'a','b','t','y','q','q','w','t'};
+	contigmap<int,char> m1 {k,v};
+
+	tf = (m1[0] == 't');
+	if (!tf) { return tf; };
+
+	std::reverse(v.begin(),v.end());
+	contigmap<int,char> m2 {k,v};
+	tf = (m2[0] == 'a');
+	if (!tf) { return tf; };
+
+	tf = (m2.size() == (k.size()-1));  // NB: -1 as 0 appears twice
+	if (!tf) { return tf; };
+
+	contigmap<char,int> m3 {v,k};
+	tf = (m3.size() == (v.size()-2));  // NB: -2 as 'q','t' appear twice
+	if (!tf) { return tf; };
+
+	return true;
+}
+
+
+
 
 
 

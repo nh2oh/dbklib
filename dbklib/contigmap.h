@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <algorithm>
-#include <string>
+#include <string>  // Needed to declare demo_contigmap()
 #include <exception>  // std::terminate()
 
 namespace dbk {
@@ -11,16 +11,30 @@ namespace dbk {
 // A map between a set of unique elements of type T_key and elements of type 
 // T_val implemented in such a way that the {key,value} elements are stored 
 // contiguously in memory.  Members are sorted (reflected in the order in 
-// which elements are returned by map.begin()+0, map.begin()+1, ...) by order 
-// of insertion.  
+// which elements are returned by map.begin()+0, map.begin()+1, ...) by the 
+// ordering implied by T_key::operator<().  
 //
 // contigmap[T_key k] returns a ref to the _value_ associated w/ key k.  
 //   If k is not a member of the set, it is added w/ a corresponding 
-//   value of T_val {}.  
-// insert({T_key,T_val}) returns a ref to the kvpair_t struct (not just the
-//   T_val _value_, as operator[]) associated w/ key k.  
-// at(T_key k) returns the corresponding val if k is a member.  If k is not
-//   a member, std::terminate() is called.  
+//   value of T_val {}.  If the map is const, std::terminate() is called
+//   if the key is not present.  
+//   In std::map, operator[] can not be used on a const map: at() must be 
+//   used instead, which throws an exception if the key is absent.  I see
+//   no reason not to allow [] for const maps, since if the key is absent
+//   we're either going to throw an exception or crash anyhow.  
+//
+// begin(),end(),cbegin(),cend()
+//   All return iterators to a struct {T_key,T_val}; std::map iterators 
+//   return a std::pair where ->first, ->second are the key and value, 
+//   respectively.  Thus, contigmap is similar.  
+//
+// insert({T_key,T_val}) inseets the key-value pair passed in and returns an
+//   iterator to the newly inserted pair.  If the key is already present, the
+//   value is changed to the value passed in.  Note the return value of a 
+//   kvpair_t iterator is different from operator[], which returns a T_val&.  
+//
+// at(T_key k) returns a reference to the corresponding value if k is a member.
+//   If k is not a member, std::terminate() is called.  
 //
 
 // Used as the return value of operator[] and as an argument to insert
@@ -45,6 +59,7 @@ public:
 		for (size_t i=0; i<k.size(); ++i) {
 			insert({k[i],v});
 		}
+		sortmap();
 	};
 
 	explicit contigmap(const std::vector<T_key>& k, const std::vector<T_val>& v) {
@@ -59,6 +74,7 @@ public:
 		for (size_t i=0; i<k.size(); ++i) {
 			insert({k[i],v[i]});
 		}
+		sortmap();
 	};
 
 	void reserve(size_t s) {
@@ -109,13 +125,14 @@ public:
 
 	//-------------------------------------------------------------------------
 	// Modifying getters (will add/insert a key-value pair if the requested key 
-	// not present).  
+	// is not present).  
 	// Inserts a default-value-constructed T_val if k is not present
 	T_val& operator[](const T_key& k) {
 		auto i = findkey(k);
 		if (i==m_kv.end()) {  // Key is absent
 			m_kv.push_back(kvpair_t{k, T_val{}});
-			i = --m_kv.end();  // push_back() may invalidate i
+			sortmap();
+			i = findkey(k);
 		}
 		return (*i).v;
 	};
@@ -127,15 +144,16 @@ public:
 	iterator_t insert(const kvpair_t& kv) {
 		auto i = findkey(kv.k);
 		if (i!=m_kv.end()) {  // key is present...
-			if ((*i).v==kv.v) {  // ...but the value is unchanged
-				return i; // Key is present & value is unchanged
+			if ((*i).v==kv.v) {  // ...and the value is unchanged
+				return i;
 			} else {  // ... and the value is different
 				*i=kv;
 			}
 			return i;
-		}
-		// key is absent
-		return m_kv.insert(i,1,kv);
+		} // key is absent
+		m_kv.push_back(kv);
+		sortmap();
+		return findkey(kv.k);
 	};
 	bool erase(const T_key& k) {
 		auto i = findkey(k);
@@ -150,7 +168,6 @@ public:
 	iterator_t end() {
 		return m_kv.end();
 	};
-
 	citerator_t begin() const {
 		return m_kv.cbegin();
 	};
@@ -164,15 +181,6 @@ public:
 	};
 	size_t size() const {
 		return m_kv.size();
-	};
-	std::string print() {
-		std::string s {};
-		for (size_t i=0; i<m_kv.size(); ++i) {
-			s += "this["; s += std::to_string(m_kv[i].k); s += "] = ";
-			s += std::to_string(m_kv[i].v);
-			s += "\n";
-		}
-		return s;
 	};
 
 	bool operator==(const contigmap& rhs) const {
@@ -190,10 +198,14 @@ private:
 		return std::find_if(m_kv.begin(), m_kv.end(),
 			[&](const kvpair_t& e){return e.k==k;});
 	};
-
 	citerator_t findkey(const T_key& k) const {
 		return std::find_if(m_kv.cbegin(), m_kv.cend(),
 			[&](const kvpair_t& e){return e.k==k;});
+	};
+
+	void sortmap() {
+		std::sort(m_kv.begin(),m_kv.end(),
+			[](const kvpair_t& lhs, const kvpair_t& rhs){return lhs.k < rhs.k;});
 	};
 
 	std::vector<kvpair_t> m_kv {};
@@ -202,12 +214,42 @@ private:
 
 contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
+
+
+//
+// "Unit tests"
+//
 bool contigmap_test_set_a();
 bool contigmap_test_set_b();
 bool contigmap_test_set_c();
 bool contigmap_test_set_d();
+bool contigmap_test_set_e();
 
 
+//
+// print():  Prints a map m
+// T_key_printer is a functor taking a T_key and returning a std::string; same deal
+// for T_val_printer.  
+// Example:
+//
+// 	 auto m = dbk::make_example_contigmap(17);
+//   std::string s {};
+//   s = dbk::print(m,
+//      [](int k){return std::to_string(k);},
+//      [](double v){ return dbk::bsprintf("%4.3f",v); });
+//   std::cout << s << std::endl;
+//
+//
+template<typename T_key, typename T_val, typename T_key_printer, typename T_value_printer>
+std::string print(const dbk::contigmap<T_key,T_val>& m,
+	const T_key_printer& kp, const T_value_printer& vp) {
+	std::string s {};
+	s += "m.size()=="+std::to_string(m.size()) + "\n";
+	for (const auto& e : m) {
+		s += "m[" + kp(e.k) + "] => " + vp(e.v) + "\n";
+	}
+	return s;
+};
 
 }; // namespace dbk
 
