@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <algorithm>
+#include <algorithm>  // std::find()
 #include <string>  // Needed to declare demo_contigmap()
 #include <exception>  // std::terminate()
 
@@ -214,16 +214,6 @@ private:
 
 contigmap<int,double> make_example_contigmap(int);
 std::string demo_contigmap(int);
-
-
-//
-// "Unit tests"
-//
-bool contigmap_test_set_a();
-bool contigmap_test_set_b();
-bool contigmap_test_set_c();
-bool contigmap_test_set_d();
-bool contigmap_test_set_e();
 
 
 //
