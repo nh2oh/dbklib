@@ -30,6 +30,9 @@
     <ClInclude Include="type_inspect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="contigumap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dbklib.cpp">
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="type_inspect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="contigumap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
