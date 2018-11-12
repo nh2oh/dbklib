@@ -15,10 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="contigmap_tests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="idx_ring_tests.cpp">
+    <ClCompile Include="scr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
