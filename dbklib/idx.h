@@ -50,8 +50,13 @@ std::string ring_bench();
 
 template<int N> class r {
 	// TODO:  Constrain N>0
+	// TODO:  Let the user pass in an N of any type; make the value_type of the
+	// ring == this type.  All functions presently taking int arguments should be
+	// changed to whatever this type is.  
+	// using value_type = T
 public:
-	r(int i) {
+	explicit r()=default;
+	explicit r(int i) {
 		// v = i%n;  // Reflection about 0 w/ sign preserved
 		//v = i-std::floor(static_cast<double>(i)/static_cast<double>(N))*N;
 		// v = ((i % N) + N) % N;
