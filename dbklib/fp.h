@@ -22,8 +22,6 @@ public:
 		zero = FE_TOWARDZERO,
 	};
 
-	//static_assert(round::nearest == std::numeric_limits<double>::round_style);
-
 	explicit fp_env() = default;
 	std::string print() const;
 	//fenv_t fe {};
@@ -95,6 +93,23 @@ private:
 	decltype(FE_DFL_ENV) fe_defltenv = FE_DFL_ENV;
 */
 
+struct triangle_demo {
+	double u {0.0};
+	double v {0.0};
+	double w {0.0};
+};
 
+// double,double,double
+// float,float,float
+double tri_heron(double,double,double);
+double tri_accurate(double,double,double);
+std::string demo_triangle();
 
+struct iter_demo {
+	double w {0.0};
+	double v {0.0};
+};
+std::string demo_iter();
+
+std::string demo_kahan_monster();
 
