@@ -158,6 +158,7 @@
     <ClInclude Include="contigmap.h" />
     <ClInclude Include="contigumap.h" />
     <ClInclude Include="dbklib.h" />
+    <ClInclude Include="fp.h" />
     <ClInclude Include="idx.h" />
     <ClInclude Include="tinyformat_dbk.h" />
     <ClInclude Include="type_inspect.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="contigmap.cpp" />
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="dbklib.cpp" />
+    <ClCompile Include="fp.cpp" />
     <ClCompile Include="idx.cpp" />
     <ClCompile Include="type_inspect.cpp" />
   </ItemGroup>

@@ -6,22 +6,9 @@
 #include <random>
 #include <chrono>
 #include <string>
-#include <cfenv>
 
 
-int yay() {
 
-	fenv_t fe {};
-	fexcept_t fx {};
-
-	auto fe1 = FE_ALL_EXCEPT;
-	auto fe2 = FE_DIVBYZERO;
-	auto fe3 = FE_INEXACT;
-	auto fe4 = FE_INVALID;
-	auto fe5 = FE_OVERFLOW;
-	auto fe6 = FE_UNDERFLOW;
-
-}
 
 
 int ring_idx(const int& n, const int& d) {
