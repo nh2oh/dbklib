@@ -45,10 +45,10 @@ std::string ring_bench() {
 	std::mt19937_64 re {seed};
 	std::uniform_int_distribution uri {};
 
-	const int N = 1000000;  // 1million=>1000000*32/8/100/100 == 4Mb
+	const int N = 100000;  // 1million=>1000000*32/8/100/100 == 4Mb
 	std::vector<int> rv {}; rv.reserve(N);
 	for (int i=0; i<N; ++i) {
-		rv[i] = uri(re);
+		rv.push_back(uri(re));
 	}
 
 	const int ring_N = rv[0];
