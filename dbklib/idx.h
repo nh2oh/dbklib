@@ -18,6 +18,10 @@
 // of the first operand.
 //
 
+template<int N>
+struct teststruct {
+	int d = N;
+};
 
 
 
@@ -31,12 +35,29 @@
 // i =        -7, -6, -5, -4, -3, -2, -1, 0,  1,  2,  3,  4,  5,  6,  7, ...
 // r<3>(i) =   2,  0,  1,  2,  0, 1,  2,  0,  1,  2,  0,  1,  2,  0,  1, ...
 //
-// 
+//
+// In an alternate design, the N isn't a template argument, but an argument passed
+// in the ctor.  I don't like this, however, because i think it is more "natural" that
+// a statement like ring {5} creates a ring w/a value of 5, rather than a ring<5> 
+// w/a value of 0.  
+//
+// N is a signed integral value both in the ring class template and class-external ring_* 
+// and pass_* functions.  This is because overwhelmingly the most common type of integral
+// values people work with are signed, and i want to avoid surprising and counterintuitive
+// signed-unsigned implicit conversion problems for users of the class.  
+//
+//
+//
+// works:
+// template<int N, typename T = typename std::enable_if<(N>0),int>::type> class r {
+//
+//
 //
 //
 
 // ring_idx(n,d) == ((n%d)+d)%d; checks d>0
 int ring_idx(const int&, const int&);
+
 // ring_idx_nocheck(n,d) == ((n%d)+d)%d; dnes not check d>0
 int ring_idx_nocheck(const int&, const int&);
 // Given a value v and ring-param N, compute the number of passes p around the ring made
@@ -48,54 +69,50 @@ int ring_value(const int&, const int&, const int&);
 
 std::string ring_bench();
 
-template<int N> class r {
-	// TODO:  Constrain N>0
-	// TODO:  Let the user pass in an N of any type; make the value_type of the
-	// ring == this type.  All functions presently taking int arguments should be
-	// changed to whatever this type is.  
-	// using value_type = T
+template<int N, typename T=int> class r {
 public:
+	using value_type = typename std::enable_if<(std::is_integral<T>::value
+		&& std::is_signed<T>::value
+		&& (N>0)),T>::type;
+
 	explicit r()=default;
-	explicit r(int i) {
-		// v = i%n;  // Reflection about 0 w/ sign preserved
-		//v = i-std::floor(static_cast<double>(i)/static_cast<double>(N))*N;
-		// v = ((i % N) + N) % N;
-		v = ring_idx_nocheck(i,N);
+	explicit r(value_type i) {
+		// v = ring_idx_nocheck(i,N);
+		//v = ((i%static_cast<value_type>(N))+static_cast<value_type>(N))%static_cast<value_type>(N);
+		v = calc(i);
 	};
 
 
 	r& operator-() {
-		v = ring_idx_nocheck(-1*v,N);
+		v = calc(-1*v);
 		return *this;
 	};
-	r& operator+=(int rhs) {
-		v = ring_idx_nocheck(v+rhs,N);
+	r& operator+=(value_type rhs) {
+		v = calc(v+rhs);
 		return *this;
 	}
 
 	r operator++(int) {  // postfix r++
 		r init_self {*this};  // Copy of init val
-		v = ring_idx_nocheck(v+1,N);
+		v=calc(v+1);
 		return init_self;
 	};
 	r& operator++() {  // prefix ++r
-		v = ring_idx_nocheck(v+1,N);
+		v=calc(v+1);
 		return *this;
 	};
 	r operator--(int) {  // postfix r--
 		r init_self {*this};  // Copy of init val
-		v = ring_idx_nocheck(v-1,N);
+		v=calc(v-1);
 		return init_self;
 	};
 	r& operator--() {  // prefix --r
-		v = ring_idx_nocheck(v-1,N);
+		v=calc(v-1);
 		return *this;
 	};
 
 
-	// TODO:  To avoid crazy unexpected results (ex, signed-unsigned conversions) 
-	// i should  require this to always be int.  
-	r operator+(int i) {
+	r operator+(value_type i) {
 		return r{v+i};
 	};
 
@@ -104,7 +121,12 @@ public:
 	template<int NN>
 	friend std::ostream& operator<<(std::ostream&, const r<NN>&); 
 private:
-	int v {0};
+	value_type v {0};
+
+	value_type calc(const value_type& i) const {
+		return ((i%static_cast<value_type>(N))+static_cast<value_type>(N))%static_cast<value_type>(N);
+	}
+
 };
 
 template<int N>

@@ -1,4 +1,4 @@
-#pragma STDC FENV_ACCESS ON
+//#pragma STDC FENV_ACCESS ON
 #include "idx.h"
 #include <exception>
 #include <cmath>  // std::floor()
