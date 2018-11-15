@@ -48,8 +48,6 @@ struct teststruct {
 //
 //
 //
-// works:
-// template<int N, typename T = typename std::enable_if<(N>0),int>::type> class r {
 //
 //
 //
@@ -69,36 +67,36 @@ int ring_value(const int&, const int&, const int&);
 
 std::string ring_bench();
 
-template<int N, typename T=int> class r {
+template<int N, typename T=int> class ring {
 public:
 	using value_type = typename std::enable_if<(std::is_integral<T>::value
 		&& std::is_signed<T>::value
 		&& (N>0)),T>::type;
 
-	explicit r()=default;
-	explicit r(value_type i) {
+	explicit ring()=default;
+	explicit ring(value_type i) {
 		v = calc(i);
 	};
 
 
-	// Dangerous and surprising, as defined
+	// Dangerous and surprising as defined
 	//r& operator-() {
 	//	v = calc(-1*v);
 	//	return *this;
 	//};
-	r& operator+=(value_type rhs) {
+	ring& operator+=(value_type rhs) {
 		v = calc(v+rhs);
 		return *this;
 	};
-	r& operator-=(value_type rhs) {
+	ring& operator-=(value_type rhs) {
 		v = calc(v-rhs);
 		return *this;
 	};
-	r& operator*=(value_type rhs) {
+	ring& operator*=(value_type rhs) {
 		v = calc(v*rhs);
 		return *this;
 	};
-	r& operator/=(value_type rhs) {
+	ring& operator/=(value_type rhs) {
 		v = calc(v/rhs);
 		return *this;
 	};
@@ -108,8 +106,6 @@ public:
 		return v;
 	};
 	
-	//template<int NN>
-	//friend std::ostream& operator<<(std::ostream&, const r<NN>&); 
 private:
 	value_type v {0};
 
@@ -120,7 +116,7 @@ private:
 };
 
 template<int N, typename VT>
-std::ostream& operator<<(std::ostream& os, const r<N,VT>& r_in) {
+std::ostream& operator<<(std::ostream& os, const ring<N,VT>& r_in) {
 	os << static_cast<VT>(r_in);
 	return os;
 }
@@ -134,19 +130,19 @@ std::ostream& operator<<(std::ostream& os, const r<N,VT>& r_in) {
 // write r+=5.  
 //
 template<int N, typename VT>
-VT operator+(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+VT operator+(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
 	return static_cast<VT>(r_in+=i);
 };
 template<int N, typename VT>
-VT operator-(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+VT operator-(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
 	return static_cast<VT>(r_in-=i);
 };
 template<int N, typename VT>
-VT operator*(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+VT operator*(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
 	return static_cast<VT>(r_in*=i);
 };
 template<int N, typename VT>
-VT operator/(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+VT operator/(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
 	return static_cast<VT>(r_in/=i);
 };
 
@@ -154,24 +150,24 @@ VT operator/(r<N,VT> r_in, typename r<N,VT>::value_type i) {
 // Modifying ++/-- operators prefix & postfix both depend on modifying member 
 // operators += & -=
 template<int N, typename VT>
-r<N,VT> operator++(r<N,VT>& r_in, int) {  // postfix r++
-	r<N,VT> init_val {r_in};  // Copy of init val
+ring<N,VT> operator++(ring<N,VT>& r_in, int) {  // postfix r++
+	ring<N,VT> init_val {r_in};  // Copy of init val
 	r_in+=1;
 	return init_val;
 };
 template<int N, typename VT>
-r<N,VT>& operator++(r<N,VT>& r_in) {  // prefix ++r
+ring<N,VT>& operator++(ring<N,VT>& r_in) {  // prefix ++r
 	r_in+=1;
 	return r_in;
 };
 template<int N, typename VT>
-r<N,VT> operator--(r<N,VT>& r_in, int) {  // postfix r++
-	r<N,VT> init_val {r_in};  // Copy of init val
+ring<N,VT> operator--(ring<N,VT>& r_in, int) {  // postfix r++
+	ring<N,VT> init_val {r_in};  // Copy of init val
 	r_in-=1;
 	return init_val;
 };
 template<int N, typename VT>
-r<N,VT>& operator--(r<N,VT>& r_in) {  // prefix ++r
+ring<N,VT>& operator--(ring<N,VT>& r_in) {  // prefix ++r
 	r_in-=1;
 	return r_in;
 };
