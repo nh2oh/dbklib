@@ -77,49 +77,39 @@ public:
 
 	explicit r()=default;
 	explicit r(value_type i) {
-		// v = ring_idx_nocheck(i,N);
-		//v = ((i%static_cast<value_type>(N))+static_cast<value_type>(N))%static_cast<value_type>(N);
 		v = calc(i);
 	};
 
 
-	r& operator-() {
-		v = calc(-1*v);
-		return *this;
-	};
+	// Dangerous and surprising, as defined
+	//r& operator-() {
+	//	v = calc(-1*v);
+	//	return *this;
+	//};
 	r& operator+=(value_type rhs) {
 		v = calc(v+rhs);
 		return *this;
-	}
-
-	r operator++(int) {  // postfix r++
-		r init_self {*this};  // Copy of init val
-		v=calc(v+1);
-		return init_self;
 	};
-	r& operator++() {  // prefix ++r
-		v=calc(v+1);
+	r& operator-=(value_type rhs) {
+		v = calc(v-rhs);
 		return *this;
 	};
-	r operator--(int) {  // postfix r--
-		r init_self {*this};  // Copy of init val
-		v=calc(v-1);
-		return init_self;
-	};
-	r& operator--() {  // prefix --r
-		v=calc(v-1);
+	r& operator*=(value_type rhs) {
+		v = calc(v*rhs);
 		return *this;
 	};
-
-
-	r operator+(value_type i) {
-		return r{v+i};
+	r& operator/=(value_type rhs) {
+		v = calc(v/rhs);
+		return *this;
 	};
 
 	int to_int() { return v; };
+	explicit operator value_type() const {
+		return v;
+	};
 	
-	template<int NN>
-	friend std::ostream& operator<<(std::ostream&, const r<NN>&); 
+	//template<int NN>
+	//friend std::ostream& operator<<(std::ostream&, const r<NN>&); 
 private:
 	value_type v {0};
 
@@ -129,12 +119,85 @@ private:
 
 };
 
-template<int N>
-std::ostream& operator<<(std::ostream& os, const r<N>& r) {
-	os << r.v;
+template<int N, typename VT>
+std::ostream& operator<<(std::ostream& os, const r<N,VT>& r_in) {
+	os << static_cast<VT>(r_in);
 	return os;
 }
 
+//
+// Operators r<N,value_type> +/- value_type return new objects & do not modify the 
+// r<N,value_type>.  They take the r<N,VT> by value.  They could take by const& ???
+// The r<N,VT> logic is used to do the op, then the final value is converted to an 
+// r<N,VT>.  
+// Someone writing my_ring + 5 probably wants an int???  If they want an r they can
+// write r+=5.  
+//
+template<int N, typename VT>
+VT operator+(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+	return static_cast<VT>(r_in+=i);
+};
+template<int N, typename VT>
+VT operator-(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+	return static_cast<VT>(r_in-=i);
+};
+template<int N, typename VT>
+VT operator*(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+	return static_cast<VT>(r_in*=i);
+};
+template<int N, typename VT>
+VT operator/(r<N,VT> r_in, typename r<N,VT>::value_type i) {
+	return static_cast<VT>(r_in/=i);
+};
+
+//
+// Modifying ++/-- operators prefix & postfix both depend on modifying member 
+// operators += & -=
+template<int N, typename VT>
+r<N,VT> operator++(r<N,VT>& r_in, int) {  // postfix r++
+	r<N,VT> init_val {r_in};  // Copy of init val
+	r_in+=1;
+	return init_val;
+};
+template<int N, typename VT>
+r<N,VT>& operator++(r<N,VT>& r_in) {  // prefix ++r
+	r_in+=1;
+	return r_in;
+};
+template<int N, typename VT>
+r<N,VT> operator--(r<N,VT>& r_in, int) {  // postfix r++
+	r<N,VT> init_val {r_in};  // Copy of init val
+	r_in-=1;
+	return init_val;
+};
+template<int N, typename VT>
+r<N,VT>& operator--(r<N,VT>& r_in) {  // prefix ++r
+	r_in-=1;
+	return r_in;
+};
+
+
+
+/*
+r<N,VT> operator++(int) {  // postfix r++
+	r init_self {*this};  // Copy of init val
+	v=calc(v+1);
+	return init_self;
+};
+
+//r& operator++() {  // prefix ++r
+//	v=calc(v+1);
+//	return *this;
+//};*/
+	/*r operator--(int) {  // postfix r--
+		r init_self {*this};  // Copy of init val
+		v=calc(v-1);
+		return init_self;
+	};
+	r& operator--() {  // prefix --r
+		v=calc(v-1);
+		return *this;
+	};*/
 
 
 
