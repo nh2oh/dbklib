@@ -166,9 +166,8 @@
   <ItemGroup>
     <ClCompile Include="contigmap.cpp" />
     <ClCompile Include="contigumap.cpp" />
-    <ClCompile Include="dbklib.cpp" />
     <ClCompile Include="fp.cpp" />
-    <ClCompile Include="idx.cpp" />
+    <ClCompile Include="ring.cpp" />
     <ClCompile Include="type_inspect.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

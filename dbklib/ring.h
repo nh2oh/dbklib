@@ -43,6 +43,7 @@ namespace dbk {
 // signed-unsigned implicit conversion problems for users of the class.  
 //
 // TODO:  The behavior of % is implementation-defined when the args are (-).  
+// TODO:  Add an enable_if to detect that the value of N is not > the max_val of VT
 //
 
 // ring_idx(n,d) == ((n%d)+d)%d; checks d>0
@@ -92,7 +93,7 @@ public:
 		return *this;
 	};
 
-	// Should this be explicit?  Makes it harded to use directly as an array idx...
+	// Should this be explicit?  Makes it harder to use directly as an array idx...
 	explicit operator value_type() const {
 		return v;
 	};

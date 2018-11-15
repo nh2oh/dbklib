@@ -41,9 +41,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dbklib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="contigmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,10 +50,10 @@
     <ClCompile Include="contigumap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="idx.cpp">
+    <ClCompile Include="fp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="fp.cpp">
+    <ClCompile Include="ring.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
