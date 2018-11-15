@@ -2,14 +2,16 @@
 #include <iostream>
 #include <type_traits>
 #include <string>
-// dbklib\idx:  Functions and types for indexing
+// dbklib\ring
+
+namespace dbk {
 
 //
 //
 // Notes
 // Operator %:
 // For A%B, if both operands are >0 then the result is also >0.  Otherwise the sign of 
-// the result is implementation-defined.
+// the result is implementation-defined.  
 // For b>0, a%b is always <= (b-1) and >= -(b-1)
 // 0 <= abs(a%b) >= (b-1)
 //
@@ -18,22 +20,16 @@
 // of the first operand.
 //
 
-template<int N>
-struct teststruct {
-	int d = N;
-};
-
-
-
-
 
 //
-// ring<N>
-// Allows forwards as well as backwards-indexing of an array.   
+// ring<N,VT>
+// Behaves as an object of integral type VT able to take on values only on [0,N).  
+// Note that N is an int, so even if VT is set to, say, int64_t, the maximum
+// value of N is that of type int.  
 //
-// r<N>(i)
-// i =        -7, -6, -5, -4, -3, -2, -1, 0,  1,  2,  3,  4,  5,  6,  7, ...
-// r<3>(i) =   2,  0,  1,  2,  0, 1,  2,  0,  1,  2,  0,  1,  2,  0,  1, ...
+// r<N,int>(i)
+// i =            -7, -6, -5, -4, -3, -2, -1, 0,  1,  2,  3,  4,  5,  6,  7, ...
+// r<3,int>(i) =   2,  0,  1,  2,  0, 1,  2,  0,  1,  2,  0,  1,  2,  0,  1, ...
 //
 //
 // In an alternate design, the N isn't a template argument, but an argument passed
@@ -46,11 +42,7 @@ struct teststruct {
 // values people work with are signed, and i want to avoid surprising and counterintuitive
 // signed-unsigned implicit conversion problems for users of the class.  
 //
-//
-//
-//
-//
-//
+// TODO:  The behavior of % is implementation-defined when the args are (-).  
 //
 
 // ring_idx(n,d) == ((n%d)+d)%d; checks d>0
@@ -78,7 +70,6 @@ public:
 		v = calc(i);
 	};
 
-
 	// Dangerous and surprising as defined
 	//r& operator-() {
 	//	v = calc(-1*v);
@@ -101,7 +92,7 @@ public:
 		return *this;
 	};
 
-	int to_int() { return v; };
+	// Should this be explicit?  Makes it harded to use directly as an array idx...
 	explicit operator value_type() const {
 		return v;
 	};
@@ -112,42 +103,64 @@ private:
 	value_type calc(const value_type& i) const {
 		return ((i%static_cast<value_type>(N))+static_cast<value_type>(N))%static_cast<value_type>(N);
 	}
-
 };
 
 template<int N, typename VT>
 std::ostream& operator<<(std::ostream& os, const ring<N,VT>& r_in) {
 	os << static_cast<VT>(r_in);
 	return os;
-}
+};
 
 //
-// Operators r<N,value_type> +/- value_type return new objects & do not modify the 
-// r<N,value_type>.  They take the r<N,VT> by value.  They could take by const& ???
-// The r<N,VT> logic is used to do the op, then the final value is converted to an 
-// r<N,VT>.  
-// Someone writing my_ring + 5 probably wants an int???  If they want an r they can
-// write r+=5.  
+// Operators r<N,VT> +,-,/,* where one of the two args is a ring<N,VT> and the 
+// other is a VT all return a VT.  In these operations, the ring<N,VT> behaves exactly
+// like an object of its value_type.  The ring object is not modified.  
+//
+// This behavior means users must be careful when using the results of expressions like
+// my_ring+5:  
+// my_array[my_ring+5] might exceed the size of the array even if N for my_ring and 
+// my_array are the same.  The correct way to do this is: my_array[my_ring+=5].  
+//
 //
 template<int N, typename VT>
 VT operator+(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
-	return static_cast<VT>(r_in+=i);
+	return static_cast<VT>(r_in)+i;
 };
 template<int N, typename VT>
-VT operator-(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
-	return static_cast<VT>(r_in-=i);
-};
-template<int N, typename VT>
-VT operator*(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
-	return static_cast<VT>(r_in*=i);
-};
-template<int N, typename VT>
-VT operator/(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
-	return static_cast<VT>(r_in/=i);
+VT operator+(typename ring<N,VT>::value_type i, ring<N,VT> r_in) {
+	return static_cast<VT>(r_in)+i;
 };
 
+template<int N, typename VT>
+VT operator-(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
+	return static_cast<VT>(r_in)-i;
+};
+template<int N, typename VT>
+VT operator-(typename ring<N,VT>::value_type i, ring<N,VT> r_in) {
+	return i-static_cast<VT>(r_in);
+};
+
+template<int N, typename VT>
+VT operator*(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
+	return static_cast<VT>(r_in)*i;
+};
+template<int N, typename VT>
+VT operator*(typename ring<N,VT>::value_type i, ring<N,VT> r_in) {
+	return static_cast<VT>(r_in)*i;
+};
+
+template<int N, typename VT>
+VT operator/(ring<N,VT> r_in, typename ring<N,VT>::value_type i) {
+	return static_cast<VT>(r_in)/i;
+};
+template<int N, typename VT>
+VT operator/(typename ring<N,VT>::value_type i, ring<N,VT> r_in) {
+	return i/static_cast<VT>(r_in);
+};
+
+
 //
-// Modifying ++/-- operators prefix & postfix both depend on modifying member 
+// Modifying ++/-- operators prefix & postfix both depend on the modifying member 
 // operators += & -=
 template<int N, typename VT>
 ring<N,VT> operator++(ring<N,VT>& r_in, int) {  // postfix r++
@@ -172,40 +185,14 @@ ring<N,VT>& operator--(ring<N,VT>& r_in) {  // prefix ++r
 	return r_in;
 };
 
-
-
-/*
-r<N,VT> operator++(int) {  // postfix r++
-	r init_self {*this};  // Copy of init val
-	v=calc(v+1);
-	return init_self;
-};
-
-//r& operator++() {  // prefix ++r
-//	v=calc(v+1);
-//	return *this;
-//};*/
-	/*r operator--(int) {  // postfix r--
-		r init_self {*this};  // Copy of init val
-		v=calc(v-1);
-		return init_self;
-	};
-	r& operator--() {  // prefix --r
-		v=calc(v-1);
-		return *this;
-	};*/
+};  // namespace dbk
 
 
 
-//
-// pdr<N>
-// "position-digit-radix"
-// radix N
-//
-// pdr<N>(i)
-// i =              -7, -6, -5, -4, -3, -2, -1, 0,  1,  2,  3,  4,  5,  6,  7, ...
-// pdr<3>(i).p() =                              0,  0,  0,  1,  1,  1,  2,  2
-// pdr<3>(i).d() =   2,  0,  1,  2,  0, 1,  2,  0,  1,  2,  0,  1,  2,  0,  1, ...
-// 
-//
-//
+
+
+
+
+
+
+

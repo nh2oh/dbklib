@@ -1,5 +1,5 @@
 //#pragma STDC FENV_ACCESS ON
-#include "idx.h"
+#include "ring.h"
 #include <exception>
 #include <cmath>  // std::floor()
 #include <vector>
@@ -11,33 +11,33 @@
 
 
 
-int ring_idx(const int& n, const int& d) {
+int dbk::ring_idx(const int& n, const int& d) {
 	if (d <= 0) {
 		std::abort();
 	}
-	return ring_idx_nocheck(n,d);
+	return dbk::ring_idx_nocheck(n,d);
 }
 
-int ring_idx_nocheck(const int& n, const int& d) {
+int dbk::ring_idx_nocheck(const int& n, const int& d) {
 	return ((n%d)+d)%d;
 }
 
 // Given a value v and ring-param N, compute the number of passes p around the ring made
 // by an iteration starting at 0 and proceeding to v.  
-int ring_pass(const int& v, const int& N) {
+int dbk::ring_pass(const int& v, const int& N) {
 	double p = static_cast<double>(v)/static_cast<double>(N);
 	return static_cast<int>(std::floor(p));
 }
 
 // Given a pass-number p and a value r on [0,N), compute the int v such that
 // ring<N>(v).v==r
-int ring_value(const int& r, const int& p, const int& N) {
+int dbk::ring_value(const int& r, const int& p, const int& N) {
 	return r + p*N;
 }
 
 
 // Benchmark ring
-std::string ring_bench() {
+std::string dbk::ring_bench() {
 	std::string s {};
 
 	auto seed = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count());
@@ -55,7 +55,7 @@ std::string ring_bench() {
 	int final_result {0};
 	auto t1 = std::chrono::high_resolution_clock::now();
 	for (int i=0; i<N; ++i) {
-		final_result += ring_idx_nocheck(rv[i],ring_N);
+		final_result += dbk::ring_idx_nocheck(rv[i],ring_N);
 	}
     auto t2 = std::chrono::high_resolution_clock::now();
 	auto t = t2-t1;

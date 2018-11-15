@@ -33,10 +33,10 @@
     <ClInclude Include="contigumap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="idx.h">
+    <ClInclude Include="fp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="fp.h">
+    <ClInclude Include="ring.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

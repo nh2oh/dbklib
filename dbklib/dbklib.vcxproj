@@ -159,7 +159,7 @@
     <ClInclude Include="contigumap.h" />
     <ClInclude Include="dbklib.h" />
     <ClInclude Include="fp.h" />
-    <ClInclude Include="idx.h" />
+    <ClInclude Include="ring.h" />
     <ClInclude Include="tinyformat_dbk.h" />
     <ClInclude Include="type_inspect.h" />
   </ItemGroup>
