@@ -65,16 +65,16 @@ public:
 	// .at() and (const this*)->operator[] are not the same: operator[]
 	// returns a const T_val&
 	std::vector<T_key> keys() {
-		std::vector<T_key> k {}; k.reserve(m_kv.size);
+		std::vector<T_key> k {}; k.reserve(m_kv.size());
 		for (auto e : m_kv) {
 			k.push_back(e.k);
 		}
 		return k;
 	}
 	std::vector<T_val> values() {
-		std::vector<T_val> v {}; v.reserve(m_kv.size);
+		std::vector<T_val> v {}; v.reserve(m_kv.size());
 		for (auto e : m_kv) {
-			v.push_back(e.k);
+			v.push_back(e.v);
 		}
 		return v;
 	}
