@@ -3,6 +3,7 @@
 #include <algorithm>  // std::find()
 #include <string>  // Needed to declare demo_contigmap()
 #include <exception>  // std::terminate()
+#include <functional>  // std::less()
 
 namespace dbk {
 
@@ -22,6 +23,8 @@ namespace dbk {
 //   used instead, which throws an exception if the key is absent.  I see
 //   no reason not to allow [] for const maps, since if the key is absent
 //   we're either going to throw an exception or crash anyhow.  
+//   contigmap also has an operator at() which calls std::terminate() if
+//   the requested key is not present.  
 //
 // begin(),end(),cbegin(),cend()
 //   All return iterators to a struct {T_key,T_val}; std::map iterators 
@@ -37,6 +40,7 @@ namespace dbk {
 //   If k is not a member, std::terminate() is called.  
 //
 
+
 // Used as the return value of operator[] and as an argument to insert
 template<typename T_key, typename T_val>
 struct kvpair {
@@ -44,12 +48,22 @@ struct kvpair {
 	T_val v {};
 };
 
-template<typename T_key, typename T_val>
+//
+// TODO:
+// - In addn to assuming a comparison operator, i am also assuming an operator==
+// and possibly an operator !=.  
+// - Implement compare_t
+// - rename to cmap ?  dbk::cmap ??
+// - Implement standard type names: value_type, etc
+//
+//
+template<typename T_key, typename T_val, typename T_comp=std::less<T_key>>
 class contigmap {
 public:
 	using kvpair_t = typename kvpair<T_key,T_val>;
 	using iterator_t = typename std::vector<kvpair_t>::iterator;
 	using citerator_t = typename std::vector<kvpair_t>::const_iterator;
+	using compare_t = typename T_comp;
 
 	//-------------------------------------------------------------------------
 	// ctors
