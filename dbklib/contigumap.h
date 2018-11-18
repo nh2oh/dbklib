@@ -1,4 +1,5 @@
 #pragma once
+#include "contigmap.h"  // declares kvpair_t
 #include <vector>
 #include <algorithm>  // std::find()
 #include <string>  // Needed to declare demo_contigumap()
@@ -18,12 +19,6 @@ namespace dbk {
 // See the notes in dbk::contigmap.  Everything is the same.  
 //
 
-// Used as the return value of operator[] and as an argument to insert
-template<typename T_key, typename T_val>
-struct kvpair {
-	T_key k {};
-	T_val v {};
-};
 
 template<typename T_key, typename T_val>
 class contigumap {
@@ -55,6 +50,7 @@ public:
 			insert({k[i],v[i]});
 		}
 	};
+
 
 	void reserve(size_t s) {
 		m_kv.reserve(s);
@@ -122,11 +118,13 @@ public:
 	iterator_t insert(const kvpair_t& kv) {
 		auto i = findkey(kv.k);
 		if (i!=m_kv.end()) {  // key is present...
+			*i=kv;
+			/*
 			if ((*i).v==kv.v) {  // ...and the value is unchanged
 				return i;
 			} else {  // ... and the value is different
 				*i=kv;
-			}
+			}*/
 			return i;
 		} // key is absent
 		m_kv.push_back(kv);
