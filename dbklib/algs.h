@@ -15,17 +15,15 @@ bool ismember(const T& e, const std::array<T,N>& s) {
 };
 
 // Returns a vector containing the elements of sa ("set a") that are members of sb ("set b").
-// sa and sb are passed by value because they must be sorted before std::set_intersection() 
-// can be called.
 //
 template<typename T>
-std::vector<T> set_intersection_nosort(std::vector<T> sa, std::vector<T> sb) {
+std::vector<T> set_intersection_nosort(const std::vector<T>& sa, const std::vector<T>& sb) {
 	auto uq_a = unique_nosort(sa);
 	auto uq_b = unique_nosort(sb);
 
 	std::vector<T> result {};  result.reserve(uq_a.size());
 	for (const auto& curr_a : uq_a) {
-		if (std::find(uq_b.begin(),uq_b.end(),curr_a)) {
+		if (std::find(uq_b.begin(),uq_b.end(),curr_a) != uq_b.end()) {
 			result.push_back(curr_a);
 		}
 	}
