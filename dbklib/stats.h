@@ -8,3 +8,9 @@ struct linreg_result {
 	double regcoef {0.0}; // r-squared
 };
 linreg_result linreg(const std::vector<double>, const std::vector<double>&);
+
+double mean(const std::vector<double>&);
+double corr(const std::vector<double>&, const std::vector<double>&);
+std::vector<double> corr(const std::vector<double>&, const std::vector<std::vector<double>>&);
+
+

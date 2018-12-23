@@ -161,7 +161,7 @@
     <ClInclude Include="dbklib.h" />
     <ClInclude Include="fp.h" />
     <ClInclude Include="iterseq.h" />
-    <ClInclude Include="linreg.h" />
+    <ClInclude Include="stats.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="ring.h" />
     <ClInclude Include="test_comp_fn.h" />
@@ -172,7 +172,7 @@
     <ClCompile Include="contigmap.cpp" />
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="fp.cpp" />
-    <ClCompile Include="linreg.cpp" />
+    <ClCompile Include="stats.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="ring.cpp" />
     <ClCompile Include="test_comp_fn.cpp" />

@@ -2,7 +2,7 @@
 #include <vector>
 #include <exception>
 #include <limits>
-#include <cmath>  // std::log2()
+#include <cmath>  // std::log2() in is_mersenne()
 
 int lcm(const std::vector<int>&);
 int lcm(const std::vector<int>&);
