@@ -154,6 +154,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="algs.h" />
     <ClInclude Include="chunkyseq.h" />
     <ClInclude Include="contigmap.h" />
     <ClInclude Include="contigumap.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="fp.h" />
     <ClInclude Include="iterseq.h" />
     <ClInclude Include="ring.h" />
+    <ClInclude Include="test_comp_fn.h" />
     <ClInclude Include="tinyformat_dbk.h" />
     <ClInclude Include="type_inspect.h" />
   </ItemGroup>
@@ -169,6 +171,7 @@
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="fp.cpp" />
     <ClCompile Include="ring.cpp" />
+    <ClCompile Include="test_comp_fn.cpp" />
     <ClCompile Include="type_inspect.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

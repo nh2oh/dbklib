@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 #include "dbklib\dbklib.h"
 
-
+using namespace dbk;
 
 TEST(idxRingTests, whatever) {
 	ring<7> r7 {0};
