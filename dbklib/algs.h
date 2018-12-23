@@ -3,21 +3,19 @@
 #include <algorithm>
 #include <map>
 
-namespace temporary_namespace {
-
 // TODO:  Unt tests
 // TODO:  Move to dbklib...
 
 
 // TODO:  Template this so it works w/ arrays
 template<typename T>
-bool ismember(T const& e, std::vector<T> const& s) {
+bool ismember(const T& e, const std::vector<T>& s) {
     return (std::find(s.begin(),s.end(),e) != s.end());
 };
 
-// Returns a vector containing the elements of sa that are members of sb.
-// sa and sb are passed by value because they must be sorted before
-// std::set_intersection() can be called.
+// Returns a vector containing the elements of sa ("set a") that are members of sb ("set b").
+// sa and sb are passed by value because they must be sorted before std::set_intersection() 
+// can be called.
 //
 template<typename T>
 std::vector<T> members(std::vector<T> sa, std::vector<T> sb) {
@@ -39,10 +37,9 @@ std::vector<T> unique(std::vector<T> s) {
     return s;
 };
 
-// Returns the unique elements in s.  
-// Works even if s can't be sorted
+// Returns the unique elements in s; works even if s can't be sorted
 template<typename T>
-std::vector<T> unique_nosort(std::vector<T> s) {
+std::vector<T> unique_nosort(const std::vector<T>& s) {
 	std::vector<T> res {};
 	for (auto i=0; i<s.size(); ++i) {
 		bool exists_in_res = false;
@@ -68,32 +65,28 @@ size_t n_unique(std::vector<T> s) {
     return last-s.begin();
 };
 
-// n_unique_nosort():  Counts the # of unique elements in s without
-// sorting s
+// n_unique_nosort():  Counts the # of unique elements in s without requiring that s be sortable.  
+// O(N(N-1))
 template<typename T>
 int n_unique_nosort(const std::vector<T>& s) {
 	int nuq {0};
-	std::vector<T> s_repeated_elements {};
-	for (auto it1 = s.begin(); it1<(s.end()-1); ++it1) {
-		if (ismember(*it1,s_repeated_elements)) {
+	std::vector<size_t> idx_rpt_elems {};
+	for (size_t i=0; i<s.size(); ++i) {
+		if (ismember(i,idx_rpt_elems)) {
 			continue;
 		}
-		bool unique {true};
-		for (auto it2 = it1+1; it2<s.end(); ++it2) {
-			if (*it1 == *it2) {
-				unique = false;
-				s_repeated_elements.push_back(*it1);
-				break;
+
+		for (size_t j=i+1; j<s.size(); ++j) {
+			if (s[i] == s[j]) {
+				idx_rpt_elems.push_back(j);
 			}
 		}
-		if (unique) {
-			++nuq;
-		}
+		++nuq;
 	}
-    
-    return nuq;
-};
+	return nuq;
 
+};
+/*
 // Returns a vector containing each unique element in s along with the 
 // number of occurences.  
 // TODO:  Fix the static_cast
@@ -108,6 +101,38 @@ std::map<T,size_t> unique_n(const std::vector<T>& s) {
 
     return result;
 };
+*/
+
+template<typename T>
+struct unique_n_result {
+	T value {};
+	size_t count {0};
+};
+
+template<typename T>
+std::vector<unique_n_result<T>> unique_n(const std::vector<T>& s) {
+	std::vector<unique_n_result<T>> result {};
+
+	std::vector<size_t> idx_rpt_elems {};
+	for (size_t i=0; i<s.size(); ++i) {
+		if (ismember(i,idx_rpt_elems)) {
+			continue;
+		}
+
+		size_t nrpts_i {1};
+		for (size_t j=i+1; j<s.size(); ++j) {
+			if (s[i] == s[j]) {
+				++nrpts_i;
+				idx_rpt_elems.push_back(j);
+			}
+		}
+		
+		result.push_back({s[i],nrpts_i});
+	}
+
+	return result;
+}
+
 
 
 // true if sa is a subset of sb (all members of sa exist in sb), false
@@ -122,5 +147,4 @@ bool issubset(std::vector<T> sa, std::vector<T> sb) {
     return true;
 };
 
-};  // namespace temporary_namespace
 

@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="algs_tests.cpp" />
     <ClCompile Include="contigmap_tests.cpp" />
     <ClCompile Include="fp_tests.cpp" />
     <ClCompile Include="idx_ring_tests.cpp" />
