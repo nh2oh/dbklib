@@ -23,6 +23,13 @@ std::vector<double> corr(const std::vector<double>&, const std::vector<std::vect
 // to std::sample(), however, std::sample() copies a maximum of end-beg elements and never 
 // selects the same element twice.  rsample() may select the same element multiple times.  
 //
+// rsample(pop.beg,pop.end,dest.begin(),dest.end(),rd,re)
+// rsample(pop.beg,pop.end,dest&,N,rd,re)
+// 
+// rsample(pop.beg,pop.end,dest.begin(),dest.end(),rd,re)
+// rsample(pop.beg,pop.end,dest&,N,rd,re)
+//
+//
 template<typename T>
 void rsample(typename std::vector<T>::const_iterator beg,
 	typename std::vector<T>::const_iterator end, typename std::vector<T>& dest,
