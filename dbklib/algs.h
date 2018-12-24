@@ -116,6 +116,7 @@ std::vector<unique_n_result<T>> unique_n(const std::vector<T>& s) {
 		}
 		
 		result.push_back({s[i],nrpts_i});
+
 	}
 
 	return result;
