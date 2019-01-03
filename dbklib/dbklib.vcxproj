@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClInclude Include="algs.h" />
     <ClInclude Include="chunkyseq.h" />
+    <ClInclude Include="cmap.h" />
     <ClInclude Include="contigmap.h" />
     <ClInclude Include="contigumap.h" />
     <ClInclude Include="dbklib.h" />

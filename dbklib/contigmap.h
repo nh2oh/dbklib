@@ -58,19 +58,7 @@ struct kvpair {
 //
 //
 
-/*
-// Allow a user to pass in some kind of nonsense type to make an unordered map
-template<typename T_key, typename T_val, typename T_eq=std::equal_to<T_key>, typename T_comp=std::less<T_key>> 
-struct cmap {
 
-private:
-	void sortmap(T_key lhs, T_key rhs) {
-		//...
-	};
-
-	void sortmap_impl(void) { };
-	template<typename blah>
-};*/
 
 template<typename T_key, typename T_val, typename T_comp=std::less<T_key>>
 class contigmap {

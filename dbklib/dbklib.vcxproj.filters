@@ -57,6 +57,9 @@
     <ClInclude Include="rational.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="contigmap.cpp">
