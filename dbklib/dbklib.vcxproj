@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="algs.h" />
+    <ClInclude Include="binfile.h" />
     <ClInclude Include="chunkyseq.h" />
     <ClInclude Include="cmap.h" />
     <ClInclude Include="contigmap.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="type_inspect.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="binfile.cpp" />
     <ClCompile Include="contigmap.cpp" />
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="fp.cpp" />

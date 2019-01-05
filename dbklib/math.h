@@ -108,10 +108,11 @@ bool aprx_int(T a, int ulp=4) {
 };
 
 
-// Is a a mersenne number?
+// Is 'a' a Mersenne number to within 'ulp' ulps?
+// Any number that can be written as 2^n - 1 is a Mersenne number.  
 template<typename T>
 bool is_mersenne(T a, int ulp=4) {
-	if (a < 1) {return false;}
+	if (a < 1) { return false; }
 	return aprx_int(std::log2(a+1),ulp);
 };
 
