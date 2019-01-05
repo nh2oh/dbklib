@@ -7,7 +7,7 @@
 
 
 // Binary-mode file reader
-dbk::binfile readfile(std::filesystem::path fp) {
+dbk::binfile readfile(const std::filesystem::path& fp) {
 	std::ifstream f {fp, std::ios::in | std::ios::binary};
 	if (!f.is_open() || f.fail()) {
 		std::cout << "dbk::readfile(std::filesystem::path fp): Unable to open file.\n"

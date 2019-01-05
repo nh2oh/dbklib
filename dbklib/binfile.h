@@ -28,7 +28,7 @@ struct binfile {
 
 
 // Binary-mode file reader
-binfile readfile(std::filesystem::path);
+binfile readfile(const std::filesystem::path&);
 
 };  // namespace dbk
 
