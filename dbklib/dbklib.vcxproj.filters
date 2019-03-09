@@ -63,6 +63,9 @@
     <ClInclude Include="binfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="contigmap.cpp">

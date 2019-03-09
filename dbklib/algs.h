@@ -4,6 +4,28 @@
 #include <array>
 
 
+// 
+// sample_if(It_src beg, It_end end, It_dest dest, Dist n, URBG&& re, Pred pred)
+// where: bool pred(decltype(*beg)) takes an argument of the type contained within
+// the sample range and returns true or false.  
+//
+template<typename It_src, typename It_dest, typename Reng, typename Dist, typename Pred>
+bool sample_if(It_src beg, It_src end, It_dest dest, Dist n, Reng&& re, Pred p) {
+	//decltype(*dest) element;
+	for (Dist i=0; (i<n && n>0); ++i) {
+		do {
+			std::sample(beg,end,dest,1,re);
+		} while (!p(*dest));
+		++dest;
+	}
+	
+	//*dest=element;
+	return true;
+};
+
+
+
+
 template<typename T>
 bool ismember(const T& e, const std::vector<T>& s) {
     return (std::find(s.begin(),s.end(),e) != s.end());

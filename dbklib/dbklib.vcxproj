@@ -164,6 +164,7 @@
     <ClInclude Include="fp.h" />
     <ClInclude Include="iterseq.h" />
     <ClInclude Include="rational.h" />
+    <ClInclude Include="scr.h" />
     <ClInclude Include="stats.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="ring.h" />
