@@ -75,8 +75,39 @@ public:
 		return insert_or_assign_return_type {data_.begin()+i,false};
 	};
 
+	// Crashes if the key is absent
+	mapped_type& operator[](const key_type& k) {
+		auto it = this->findk(k);
+		if (it==this->data_.end()) {
+			std::abort();
+		}
+		return *it;
+	};
+
+	// Crashes if the key is absent
+	mapped_type& at(const key_type& k) {
+		auto it = this->findk(k);
+		if (it==this->data_.end()) {
+			std::abort();
+		}
+		return *it;
+	};
+
 private:
 	typename std::vector<value_type> data_ {};
+
+	bool equal(const key_type& k_lhs, const key_type& k_rhs) const {
+		return (!(k_lhs<k_rhs) && !(k_rhs<k_lhs));
+	};
+
+	typename std::vector<value_type>::iterator findk(const key_type& k) {
+		size_t i {0};
+		for (i=0; i<data_.size(); ++i) {  // Seek to the first element == k
+			if (equal(k,this->data_[i].key)) { break; }
+		}
+		return this->data_.begin()+i;
+	};
+
 };
 
 };  // namespace dbk

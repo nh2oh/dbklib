@@ -98,7 +98,7 @@
     <ClCompile Include="binfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cmapcpp.cpp">
+    <ClCompile Include="cmap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -174,7 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="binfile.cpp" />
-    <ClCompile Include="cmapcpp.cpp" />
+    <ClCompile Include="cmap.cpp" />
     <ClCompile Include="contigmap.cpp" />
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="fp.cpp" />
