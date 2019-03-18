@@ -2,7 +2,6 @@
 #include <filesystem>
 #include <vector>
 #include <iostream>
-#include <exception>  // std::abort()
 #include <fstream>
 #include <string>
 
