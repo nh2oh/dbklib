@@ -94,6 +94,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile />
       <AdditionalIncludeDirectories>$(dbk_proj_path)\dbklib\;$(dbk_include_path)\googletest-dbk\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -162,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="algs_tests.cpp" />
+    <ClCompile Include="binfile_tests.cpp" />
     <ClCompile Include="contigmap_tests.cpp" />
     <ClCompile Include="fp_tests.cpp" />
     <ClCompile Include="idx_ring_tests.cpp" />

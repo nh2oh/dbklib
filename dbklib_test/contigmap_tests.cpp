@@ -4,7 +4,7 @@
 #include <random>
 #include <string>
 
-
+/*
 TEST(ContigmapTests, ReadAndInsertWithInsertAndAtAndSqbrktOp) {
 	dbk::contigmap<int,double> m;  // Declared, not value-constructed
 	EXPECT_EQ(m.size(),0);
@@ -47,9 +47,9 @@ TEST(ContigmapTests, ReadAndInsertWithInsertAndAtAndSqbrktOp) {
 	EXPECT_FLOAT_EQ(m.at(3),-12);
 	EXPECT_FLOAT_EQ(m[3],-12);
 }
+*/
 
-
-
+/*
 TEST(ContigmapTests, InsertAndErase) {
 	dbk::contigmap<int,double> m {};  // Declared and default-value-constructed
 	EXPECT_EQ(m.size(),0);
@@ -64,8 +64,9 @@ TEST(ContigmapTests, InsertAndErase) {
 	m.erase(477);    EXPECT_EQ(m.size(),1);
 
 }
+*/
 
-
+/*
 TEST(ContigmapTests, VectorConstructorAndRangeForOrdering) {
 	std::vector<int> vk {7, -17, 4, 3, -16, -2, 222, 10, -14, -19, 2, 25, -7, -106, 22, 5, -27};
 	std::vector<double> vv {0.04, 0.05, 0.0455, 0.1111, -0.125, 0.0556, 0.0625, 0.0435,
@@ -91,7 +92,9 @@ TEST(ContigmapTests, VectorConstructorAndRangeForOrdering) {
 		m.erase(val_delete);
 	}
 }
+*/
 
+/*
 TEST(ContigmapTests, CharCount) {
 	std::string s {};
 
@@ -120,8 +123,9 @@ TEST(ContigmapTests, CharCount) {
 		EXPECT_EQ(m[L[i]],N[i]);
 	}
 }
+*/
 
-
+/*
 TEST(ContigmapTests, CharAsValueType) {
 	// key 0 appears twice:  The first value is 'b', the second is 't'
 	std::vector<int> k {-1,0,1,2,3,41,15,0};
@@ -142,7 +146,7 @@ TEST(ContigmapTests, CharAsValueType) {
 	EXPECT_EQ(m3.size(),(v.size()-2));  // NB: -2 as 'q','t' appear twice
 
 }
-
+*/
 
 
 
