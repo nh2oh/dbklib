@@ -1,7 +1,7 @@
 #include "rational.h"
 #include <numeric>  // lcm(), gcd()
 #include <vector> // comdenom
-
+#include <cmath>
 
 frac& frac::reduce() {
 	int cd = std::gcd(num,denom);
