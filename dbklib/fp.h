@@ -113,3 +113,6 @@ std::string demo_iter();
 
 std::string demo_kahan_monster();
 
+void demo_int_gap();
+
+

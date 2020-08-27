@@ -181,6 +181,7 @@
     <ClCompile Include="contigumap.cpp" />
     <ClCompile Include="fp.cpp" />
     <ClCompile Include="rational.cpp" />
+    <ClCompile Include="sbo.cpp" />
     <ClCompile Include="stats.cpp" />
     <ClCompile Include="math.cpp" />
     <ClCompile Include="ring.cpp" />
