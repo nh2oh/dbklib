@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <vector>
 
+
 namespace dbk {
 
 //
@@ -24,6 +25,9 @@ struct binfile {
 
 // Binary-mode file reader
 binfile readfile(const std::filesystem::path&);
+
+int test_binfile();
+
 
 };  // namespace dbk
 

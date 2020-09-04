@@ -42,3 +42,15 @@ dbk::binfile dbk::readfile(const std::filesystem::path& fp) {
 	return result;
 }
 
+
+
+int dbk::test_binfile() {
+	std::string fn {"..\\..\\dbklib_test\\test_materials\\test.mid"};
+	auto bf = dbk::readfile(fn);
+	if (bf.file.string() != fn) {
+		return -1;
+	}
+	return 0;
+}
+
+

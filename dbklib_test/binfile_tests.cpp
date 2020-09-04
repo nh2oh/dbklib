@@ -1,3 +1,27 @@
+/*
+#include "dbklib\binfile.h"
+#include <string>
+#include <filesystem>
+#include <vector>
+
+
+
+
+
+int whatwhat() {
+	std::string fn {"..\\..\\dbklib_test\\test_materials\\test.mid"};
+	std::filesystem::path fp(fn);
+	if (fp.string() != fn) {
+		return -1;
+	}
+	return 0;
+}
+
+*/
+
+
+
+
 #include "gtest/gtest.h"
 #include "dbklib\binfile.h"
 #include <string>
