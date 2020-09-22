@@ -26,7 +26,22 @@ struct binfile {
 // Binary-mode file reader
 binfile readfile(const std::filesystem::path&);
 
-int test_binfile();
+
+
+
+std::vector<unsigned char> read_binary(const std::filesystem::path&);
+std::vector<unsigned char> read_binary_csio(const std::filesystem::path&);
+std::vector<unsigned char> read_binary_ios(const std::filesystem::path&);
+
+//
+// read_binary*(...)
+// Read an entire file (in binary mode) into the designated std::vector.  Calls
+// resize() on the vector so that after the call, size() is equal to the number
+// of bytes read.  
+//
+bool read_binary(const std::filesystem::path&, std::vector<unsigned char>&);
+bool read_binary_csio(const std::filesystem::path&, std::vector<unsigned char>&);
+bool read_binary_ios(const std::filesystem::path&, std::vector<unsigned char>&);
 
 
 };  // namespace dbk
