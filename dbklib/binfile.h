@@ -41,8 +41,10 @@ std::vector<unsigned char> read_binary_ios(const std::filesystem::path&);
 //
 bool read_binary(const std::filesystem::path&, std::vector<unsigned char>&);
 bool read_binary_csio(const std::filesystem::path&, std::vector<unsigned char>&);
+bool read_binary_csio(const char*, std::vector<unsigned char>&);
 bool read_binary_ios(const std::filesystem::path&, std::vector<unsigned char>&);
 
+void benchmark_read_binary();
 
 };  // namespace dbk
 
