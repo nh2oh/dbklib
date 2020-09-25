@@ -8,47 +8,6 @@
 #include <cstddef>
 #include <chrono>
 
-// Binary-mode file reader
-dbk::binfile dbk::readfile(const std::filesystem::path& fp) {
-	dbk::binfile result {};
-	std::basic_ifstream<unsigned char> fs {fp, std::ios::in | std::ios::binary};
-	if (!fs.is_open() || !fs.good()) {
-		// fs.good() => !(fs.eof() || fs.fail() || fs.bad())
-		// fs.good() => std::ios_base == goodbit
-		std::cerr << "Error in dbk::readfile(const std::filesystem::path&)\n"
-			<< "\tfp== " << fp.string() << "\n"
-			<< "current_path() == " << std::filesystem::current_path() << "\n"
-			<< "\tfs.is_open() == " << fs.is_open() << "\n"
-			<< "\tfs.good() == " << fs.good() << "\n"
-			<< "\tfs.eof() == " << fs.eof() << "\n"
-			<< "\tfs.fail() == " << fs.fail() << "\n"
-			<< "\tfs.bad() == " << fs.bad() << "\n"
-			<< std::endl;
-
-		return result;
-	}
-
-	// Two methods to determine the size:
-	// Method 1:
-	//
-	fs.seekg(0,std::ios::end);
-	auto fsize = fs.tellg();
-	fs.seekg(0,std::ios::beg);
-	// Method 2:
-	// auto fsize = std::filesystem::file_size(fp);
-
-	result.file = fp;
-	result.d.resize(fsize);
-	fs.read(result.d.data(),fsize);
-	fs.close();
-
-	return result;
-}
-
-
-
-
-
 
 //
 // Implementation notes
@@ -61,7 +20,11 @@ dbk::binfile dbk::readfile(const std::filesystem::path& fp) {
 //     std lib routines in std::filesystem (and maybe also std::string) will throw if 
 //     the file name can not be converted into a const char *.  
 // 3)  Because std::ftell() returns a long, which is a 32 bit int on MSVC, these _csio
-//     functions can not read files > ~2.147 Gb (2^31 - 1).  
+//     functions can not read files > ~2.147 Gb (2^31 - 1) on windows if the textbook 
+//     fseek-ftell-fseek dance is used to determine the size.  Instead we do the
+//     fgetpos-fseek-fgetpos-fseek dance; subtracting two std::fpos_t's yields a 
+//     std::streamoff, a signed integral type of sufficient size to represent the maximum 
+//     possible file size supported by the operating system.  
 //
 // The ios family of functions:
 // 1)  The output is a vector of unsigned char, however, the stream is instantiated as
@@ -70,22 +33,25 @@ dbk::binfile dbk::readfile(const std::filesystem::path& fp) {
 //     is instantiated as std::basic_ifstream<unsigned char>, a catastrophic amount of 
 //     time is spent in std::codecvt<unsigned char, char,...>::do_in().  
 //
-//
-//
 bool dbk::read_binary_csio(const char *fpth, std::vector<unsigned char>& v) {
 	auto fp = std::fopen(fpth,"rb");
 	if (!fp) {
 		return false;
 	}
+
+	std::fpos_t beg;
+	std::fgetpos(fp,&beg);
 	if (std::fseek(fp,0,SEEK_END) != 0) {
 		fclose(fp);
 		return false;
 	}
-	auto sz = std::ftell(fp);
+	std::fpos_t end;
+	std::fgetpos(fp,&end);
 	if (std::fseek(fp,0,SEEK_SET) != 0) {
 		fclose(fp);
 		return false;
 	}
+	auto sz = end-beg;
 
 	v.resize(sz);
 
@@ -102,20 +68,30 @@ bool dbk::read_binary_csio(const char *fpth, std::vector<unsigned char>& v) {
 bool dbk::read_binary_csio(const std::filesystem::path& fpth, std::vector<unsigned char>& v) {
 	return dbk::read_binary_csio(fpth.string().c_str(),v);
 }
-std::vector<unsigned char> dbk::read_binary_csio(const std::filesystem::path& fp) {
+std::vector<unsigned char> dbk::read_binary_csio(const std::filesystem::path& fpth) {
 	std::vector<unsigned char> v(0);
-	auto b = dbk::read_binary_csio(fp,v);
+	auto b = dbk::read_binary_csio(fpth.string().c_str(),v);
 	return v;
 }
 
 
-bool dbk::read_binary_ios(const std::filesystem::path& fp, std::vector<unsigned char>& v) {
-	std::basic_ifstream<char> fs(fp, std::ios::binary|std::ios::in);
+//
+// Implementation notes
+// 
+// The ios family of functions:
+// 1)  The output is a vector of unsigned char, however, the stream is instantiated as
+//     std::basic_ifstream<char>.  In the call to fread, the pointer into the destination
+//     vector has to be reinterpret_casted to char* from unsigned char*.  If the ifstream
+//     is instantiated as std::basic_ifstream<unsigned char>, a catastrophic amount of 
+//     time is spent in std::codecvt<unsigned char, char,...>::do_in().  
+//
+bool dbk::read_binary_ios(const std::filesystem::path& fpth, std::vector<unsigned char>& v) {
+	std::basic_ifstream<char> fs(fpth, std::ios::binary|std::ios::in);
 	if (!fs.is_open()) {
 		return false;
 	}
 
-	fs.seekg(0, std::ios::end);  // compare to csio impl and seekg docs
+	fs.seekg(0, std::ios::end);
 	auto fsize = fs.tellg();
 	fs.seekg(0, std::ios::beg);
 
@@ -126,17 +102,24 @@ bool dbk::read_binary_ios(const std::filesystem::path& fp, std::vector<unsigned 
 	return true;
 }
 
+std::vector<unsigned char> dbk::read_binary_ios(const std::filesystem::path& fpth) {
+	std::vector<unsigned char> v(0);
+	auto b = dbk::read_binary_ios(fpth,v);
+	return v;
+}
+
+
 
 void dbk::benchmark_read_binary() {
-	std::filesystem::path big_file("D:\\2020-09-16 23-29-32.mkv");
+	std::filesystem::path big_file("D:\\2020-09-16_spellbreak_ban_part_1a.mkv");
 	std::filesystem::path small_file("D:\\2020-09-14_avilo_vs_pacomike.mkv");
 	std::filesystem::path tiny_file("D:\\au.bat");
-	auto file = small_file;
+	auto file = big_file;
 	std::vector<unsigned char> v {};
 
 	std::cout << "Starting benchmark_read_binary:" << std::endl;
 	auto t_start = std::chrono::steady_clock::now();
-	for (int i=0; i<1; ++i) {
+	for (int i=0; i<10; ++i) {
 		auto b = dbk::read_binary_ios(file,v);
 		if (!b) {
 			std::cout << "error reading file :(" << std::endl;
