@@ -110,5 +110,8 @@
     <ClCompile Include="sbo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="binfile_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

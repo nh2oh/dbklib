@@ -8,7 +8,6 @@
 #include <cstddef>
 #include <chrono>
 
-
 //
 // Implementation notes
 // 
@@ -109,7 +108,6 @@ std::vector<unsigned char> dbk::read_binary_ios(const std::filesystem::path& fpt
 }
 
 
-
 void dbk::benchmark_read_binary() {
 	std::filesystem::path big_file("D:\\2020-09-16_spellbreak_ban_part_1a.mkv");
 	std::filesystem::path small_file("D:\\2020-09-14_avilo_vs_pacomike.mkv");
@@ -120,7 +118,7 @@ void dbk::benchmark_read_binary() {
 	std::cout << "Starting benchmark_read_binary:" << std::endl;
 	auto t_start = std::chrono::steady_clock::now();
 	for (int i=0; i<10; ++i) {
-		auto b = dbk::read_binary_ios(file,v);
+		auto b = dbk::read_binary_win32(file,v);
 		if (!b) {
 			std::cout << "error reading file :(" << std::endl;
 			break;

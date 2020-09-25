@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="binfile.cpp" />
+    <ClCompile Include="binfile_win32.cpp" />
     <ClCompile Include="byte_manipulation.cpp" />
     <ClCompile Include="cmap.cpp" />
     <ClCompile Include="contigmap.cpp" />
