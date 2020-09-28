@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "binfile.h"
 #include <filesystem>
 #include <vector>
@@ -55,4 +56,4 @@ std::vector<unsigned char> dbk::read_binary_win32(const std::filesystem::path& f
 	return v;
 }
 
-
+#endif

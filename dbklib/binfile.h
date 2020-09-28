@@ -14,11 +14,14 @@ namespace dbk {
 bool read_binary_csio(const std::filesystem::path&, std::vector<unsigned char>&);
 bool read_binary_csio(const char*, std::vector<unsigned char>&);
 bool read_binary_ios(const std::filesystem::path&, std::vector<unsigned char>&);
+std::vector<unsigned char> read_binary_csio(const std::filesystem::path&);
+std::vector<unsigned char> read_binary_ios(const std::filesystem::path&);
+
+#ifdef _WIN32
 bool read_binary_win32(const char*, std::vector<unsigned char>&);
 bool read_binary_win32(const std::filesystem::path&, std::vector<unsigned char>&);
 std::vector<unsigned char> read_binary_win32(const std::filesystem::path&);
-std::vector<unsigned char> read_binary_csio(const std::filesystem::path&);
-std::vector<unsigned char> read_binary_ios(const std::filesystem::path&);
+#endif
 
 void benchmark_read_binary();
 
